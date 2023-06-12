@@ -1,13 +1,14 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -34,16 +35,16 @@ public class MealsUtil {
                 .of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
-    public static List<MealTo> getMealTo(List<Meal> meals, int caloriesPerDay) {
+    public static List<MealTo> getMealTo(Collection<Meal> meals, int caloriesPerDay) {
         return filtered(meals, caloriesPerDay, meal -> true);
     }
 
     public static List<MealTo> getMealToWithFilter
-            (List<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
+            (Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
         return filtered(meals, caloriesPerDay, meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
     }
 
-    private static List<MealTo> filtered(List<Meal> meals, int caloriesPerDay, Predicate<Meal> mealFilter) {
+    private static List<MealTo> filtered(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> mealFilter) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream().collect(Collectors.groupingBy(Meal::getDate,
                 Collectors.summingInt(Meal::getCalories))
         );
@@ -55,7 +56,7 @@ public class MealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 
     private static List<MealTo> filteredByStreams
