@@ -14,12 +14,12 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public UserService(UserRepository repository) {
-        this.repository = repository;
+    public UserService(UserRepository r) {
+        this.repository = r;
     }
 
-    public User create(User user) {
-        return repository.save(user);
+    public User create(User u) {
+        return repository.save(u);
     }
 
     public void delete(int id) {
@@ -38,7 +38,7 @@ public class UserService {
         return repository.getAll();
     }
 
-    public void update(User user) {
-        checkNotFoundWithId(repository.save(user), user.getId());
+    public void update(User u) {
+        checkNotFoundWithId(repository.save(u), u.getId());
     }
 }
