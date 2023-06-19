@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -86,12 +85,15 @@ public class InMemoryMealRepository implements MealRepository {
         return CollectionUtils.isEmpty(meals) ?
                 Collections.emptyList() :
                 meals.values().stream()
-                        .filter(m -> DateTimeUtil.isBetweenDate(m.getDate(), startDate, endDate))
+                        .filter(m -> DateTimeUtil.isBetween(m.getDate(), startDate, endDate))
                         .sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate()))
                         .collect(Collectors.toList());
     }
 
     private Map<Integer, Meal> getMeal(Integer userId){
-        return repository.get(userId);
+        Map<Integer, Meal> meals = repository.get(userId);
+        if(meals == null || meals.isEmpty())
+            return  repository.computeIfAbsent(userId, id -> new ConcurrentHashMap<>());
+        return meals;
     }
 }
